@@ -1,16 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+export interface User {
+  id: number;
+  name: any;
+  email: string;
+  username: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class UserApiService {
-  private baseUrl = 'https://jsonplaceholder.typicode.com/users'; // Объявление базового URL
 
-  constructor(private http: HttpClient) {} // Инжектирование HttpClient для выполнения HTTP запросов
+  private readonly baseUrl = 'https://jsonplaceholder.typicode.com/users';
+  private http = inject(HttpClient);
 
-  getUsers(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.baseUrl);
   }
 }

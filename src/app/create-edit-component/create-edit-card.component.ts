@@ -5,7 +5,7 @@ import {
   FormGroup,
   FormsModule,
 } from '@angular/forms';
-import { User } from '../user-card/user-card.component';
+import { User } from '../user.model';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -20,17 +20,16 @@ import {
   imports: [FormsModule, MatDialogModule, ReactiveFormsModule],
 })
 export class CreateEditCard {
-  isEdit: boolean;
+  readonly isEdit: boolean;
 
-  form = new FormGroup({
+  readonly form = new FormGroup({
     name: new FormControl(''),
-    id: new FormControl(''),
+    id: new FormControl<number | null>(null),
     username: new FormControl(''),
     email: new FormControl(''),
   });
   constructor(
-    // MAT_DIALOG_DATA private readonly user?: User
-    @Inject(MAT_DIALOG_DATA) private data: { user: User; isEdit: boolean },
+    @Inject(MAT_DIALOG_DATA) private readonly data: { user: User; isEdit: boolean },
     private dialogRef: MatDialogRef<CreateEditCard>
   ) {
     this.form.patchValue(data?.user);

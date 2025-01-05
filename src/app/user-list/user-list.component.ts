@@ -1,12 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { UserApiService } from '../services/users-api.service';
-import { UserService } from '../services/users.service';
 import { AsyncPipe, NgFor } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateEditCard } from '../create-edit-component/create-edit-card.component';
-import { User } from '../user-card/user-card.component';
+import { User } from '../user.model';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import * as UserActions from '../NGRX/actions';
 import * as selectUser from '../NGRX/selector';
 
@@ -18,37 +15,19 @@ import * as selectUser from '../NGRX/selector';
   imports: [NgFor, AsyncPipe, CreateEditCard],
 })
 export class UserList implements OnInit {
-  private store = inject(Store);
-  public users$ = this.store.select(selectUser.usersSelector);
-  public loadingUsers$ = this.store.pipe(select(selectUser.loadingSelector));
+  private readonly store = inject(Store);
+  public readonly users$ = this.store.select(selectUser.usersSelector);
+  public readonly loadingUsers$ = this.store.pipe(select(selectUser.loadingSelector));
 
   constructor(
-    private userApiService: UserApiService,
-    private userService: UserService,
-    private dialog: MatDialog
+    private readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
-    // this.users$ = this.store.select(selectUser.usersSelector);
-    // this.loadingUsers$
-
-    // this.store.subscribe((state) => {
-    // console.log('мой стейт:', state);
-    // });
-
     this.users$.subscribe((users) => {
-      console.log('Current Users:', users);
     });
 
-    // const usersFromLocalStorage = localStorage.getItem('users');
-    // if (
-    // !usersFromLocalStorage ||
-    // JSON.parse(usersFromLocalStorage).length === 0
-    // ) {
-    // this.userApiService.getUsers().subscribe((data: any[]) => {
-    this.store.dispatch(UserActions.loadUsers()); // Загружаем пользователей
-    // });
-    // }
+    this.store.dispatch(UserActions.loadUsers()); 
   }
 
   deleteUser(userId: number): void {
@@ -59,7 +38,7 @@ export class UserList implements OnInit {
   }
 
   openModal(user?: User) {
-    const isEdit = Boolean(user); // todo подумай как можно обойтись без этого
+    const isEdit = Boolean(user);
     const dialogRef = this.dialog.open(CreateEditCard, {
       hasBackdrop: true,
       data: {
@@ -71,10 +50,7 @@ export class UserList implements OnInit {
     dialogRef.afterClosed().subscribe((newUser) => {
       if (!newUser) return;
 
-      // Приведение типов данных
       newUser.id = +newUser.id;
-
-      console.log('User to save: ', newUser);
 
       if (isEdit) {
         this.store.dispatch(UserActions.editUser({ editedUser: newUser }));

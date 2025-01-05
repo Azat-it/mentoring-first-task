@@ -1,6 +1,7 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { User } from '../user-card/user-card.component';
+import { User } from '../user.model';
+
 import { isPlatformBrowser } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { UserActions } from '../NGRX/actions';
@@ -11,13 +12,11 @@ import { UserActions } from '../NGRX/actions';
 export class UserService {
   private readonly _users$ = new BehaviorSubject<User[]>([]);
   public readonly users$ = this._users$.asObservable();
-  private isBrowser: boolean;
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
     private store: Store
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
     this.loadUsersFromLocalStorage();
   }
 
@@ -31,30 +30,25 @@ export class UserService {
     }
   }
 
-  // Сохраняем пользователей в localStorage
   private saveUsersToLocalStorage(users: User[]): void {
     localStorage.setItem('users', JSON.stringify(users));
   }
 
   public setUsers(users: User[]): void {
     this.store.dispatch(UserActions.setUsers({ users }));
-    this.saveUsersToLocalStorage(users); // Сохраняем в localStorage
+    this.saveUsersToLocalStorage(users);
   }
 
   public deleteUser(userId: number): void {
     const currentUsers = this._users$.getValue();
     const updatedUsers = currentUsers.filter((user) => user.id !== userId);
+    
     this._users$.next(updatedUsers);
-    this.saveUsersToLocalStorage(updatedUsers); // Сохраняем в localStorage
+    this.saveUsersToLocalStorage(updatedUsers);
   }
 
   public addUser(user: User): void {
-    console.log('вывод: ', { user });
-    // const currentUsers = this._users$.getValue();
-    // const updatedUsers = [...currentUsers];
-    // this._users$.next(updatedUsers);
-    // this.saveUsersToLocalStorage(updatedUsers); // Сохраняем в localStorage
-    this.store.dispatch(UserActions.addUser({ user })); // Отправляет действие добавления пользователя в хранилище
+    this.store.dispatch(UserActions.addUser({ user }));
   }
 
   public editUser(user: User): void {
@@ -65,6 +59,6 @@ export class UserService {
     );
     updatedUsers[index] = user;
     this._users$.next(updatedUsers);
-    this.saveUsersToLocalStorage(updatedUsers); // Сохраняем в localStorage
+    this.saveUsersToLocalStorage(updatedUsers);
   }
 }

@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { User } from '../user-card/user-card.component';
+import { User } from '../user.model';
 
 export const addUser = createAction('[User] Add User', props<{ user: User }>());
 
@@ -28,7 +28,7 @@ export const loadUserFailure = createAction(
 export const setUsers = createAction(
   '[User] Set Users',
   props<{ users: User[] }>()
-); // Добавлен метод setUsers
+);
 
 export const UserActions = {
   addUser,

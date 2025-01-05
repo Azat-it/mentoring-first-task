@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { User } from '../user-card/user-card.component';
+import { User } from '../user.model';
 import * as UserActions from '../NGRX/actions';
 
 export interface UserState {
@@ -15,10 +15,8 @@ const initialState: UserState = {
 };
 
 export const USER_KEY = 'user';
-
 export const userReducer = createReducer(
   initialState,
-
   on(UserActions.addUser, (state, { user }) => {
     return {
       ...state,

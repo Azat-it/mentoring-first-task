@@ -1,5 +1,3 @@
-// import { User } from '../user-card/user-card.component';
-
 import { createFeatureSelector } from '@ngrx/store';
 import { createSelector } from '@ngrx/store';
 import { UserState } from './reducer';
